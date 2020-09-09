@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- This is an example file of a compi pipeline -->
+<pipeline xmlns="http://www.sing-group.org/compi/pipeline-1.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<version>1.0.0</version>
+
+	<params>
+		<param name="input_dir" shortName="i" global="true" defaultValue="/input">Path of the input directory.</param>
+		<param name="output_dir" shortName="o" global="true" defaultValue="/output">Path of the output directory.</param>
+		<param name="reference" shortName="r" global="true" >Text identifying reference sequence.</param>
+	</params> 
+
+	<tasks>
+		<foreach id="check_cds" of="file" in="${input_dir}" as="file">
+			FILENAME=$(basename -- "${file}")
+        	single_check_cds ${file} /output/${FILENAME}.corrected ${reference} --clustal-omega=clustalo
+		</foreach>
+	</tasks>
+	<metadata>
+		<task-description id="check_cds">Runs the single_check_cds script to each input FASTA.</task-description>
+	</metadata>
+</pipeline>
