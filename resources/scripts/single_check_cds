@@ -54,6 +54,8 @@ results_folder=$(mktemp -d /tmp/check_CDS.XXXXXXXXXX) || { echo "Failed to creat
 
 cp $input_fasta $results_folder/input
 
+fasta_remove_line_breaks $results_folder/input
+
 cd $results_folder
 
 echo "Analyzing input FASTA file: $input_fasta"
