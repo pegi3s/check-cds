@@ -3,12 +3,12 @@
 <!-- This is an example file of a compi pipeline -->
 <pipeline xmlns="http://www.sing-group.org/compi/pipeline-1.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-	<version>1.1.0</version>
+	<version>1.2.0</version>
 
 	<params>
 		<param name="input_dir" shortName="i" global="true" defaultValue="/input">Path of the input directory.</param>
 		<param name="output_dir" shortName="o" global="true" defaultValue="/output">Path of the output directory.</param>
-		<param name="reference" shortName="r" global="true" >Text identifying reference sequence.</param>
+		<param name="reference" shortName="r" global="true">Text identifying reference sequence. Note that this text is matched in a case-insensitive mode.</param>
 	</params> 
 
 	<tasks>

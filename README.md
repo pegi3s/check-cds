@@ -17,7 +17,7 @@ docker run --rm -v /path/to/input:/input -v /path/to/output:/output pegi3s/check
 Where you should replace:
 - `/path/to/input` to point to the directory that contains the input file you want to process.
 - `/path/to/output` to point to the directory where the output files must be created.
-- `<reference_sequence>` to the string that must be found in the reference sequence.
+- `<reference_sequence>` to the string that must be found in the reference sequence (case insensitive).
 
 By default, a maximum of 6 parallel tasks can be run. To modify this value, use the `--num-tasks` parameter as the following example shows (replacing `<num_tasks>` with the new value):
 

@@ -61,37 +61,36 @@ cd $results_folder
 echo "Analyzing input FASTA file: $input_fasta"
 echo "Temporary working directory: $results_folder"
 
-grep -A1 -w $reference $results_folder/input >> temp.$file
+grep -i -A1 -w $reference $results_folder/input >> temp.$file
 sed -i -e "/\b$reference\b/,+1d" $results_folder/input
 
 while read header; read sequences 
 do
+	echo $header >> temp.$file
+	echo $sequences >> temp.$file
 
-echo $header >> temp.$file
-echo $sequences >> temp.$file
+	seqcount=$(grep -c '>' temp.$file)
 
-seqcount=$(grep -c '>' temp.$file)
+	if [ $seqcount -gt "1" ]; then
+		if [ "$DOCKER" = true ]; then
+			docker run --rm -v $(pwd):/data pegi3s/clustalomega --force -i /data/temp.$file -o /data/tempaliraw.$file
+		else
+			${CLUSTALOMEGA} --force -i $(pwd)/temp.$file -o $(pwd)/tempaliraw.$file
+		fi
+		grep -v '>' tempaliraw.$file > tempali.$file
+		sed -i 's/---//g' tempali.$file
+		a=$(grep -c "^\-[^-]" tempali.$file)
+		b=$(grep -c "[^-]-[^-]" tempali.$file)
+		c=$(grep -c '[^-]\-$' tempali.$file)
+		d=$(grep -c "^\-\-[^-]" tempali.$file)
+		e=$(grep -c "[^-]--[^-]" tempali.$file)
+		f=$(grep -c '[^-]\-\-$' tempali.$file)
+		if [ $a -gt "0" ] || [ $b -gt "0" ] || [ $c -gt "0" ] || [ $d -gt "0" ] || [ $e -gt "0" ] || [ $f -gt "0" ]; then
+			head -n -2 temp.$file > temp1.$file
+			rm temp.$file && mv temp1.$file temp.$file
+		fi
 
-if [ $seqcount -gt "1" ]; then
-    if [ "$DOCKER" = true ]; then
-        docker run --rm -v $(pwd):/data pegi3s/clustalomega --force -i /data/temp.$file -o /data/tempaliraw.$file
-    else
-        ${CLUSTALOMEGA} --force -i $(pwd)/temp.$file -o $(pwd)/tempaliraw.$file
-    fi
-	grep -v '>' tempaliraw.$file > tempali.$file
-	sed -i 's/---//g' tempali.$file
-	a=$(grep -c "^\-[^-]" tempali.$file)
-	b=$(grep -c "[^-]-[^-]" tempali.$file)
-	c=$(grep -c '[^-]\-$' tempali.$file)
-	d=$(grep -c "^\-\-[^-]" tempali.$file)
-	e=$(grep -c "[^-]--[^-]" tempali.$file)
-	f=$(grep -c '[^-]\-\-$' tempali.$file)
-	if [ $a -gt "0" ] || [ $b -gt "0" ] || [ $c -gt "0" ] || [ $d -gt "0" ] || [ $e -gt "0" ] || [ $f -gt "0" ]; then
-		head -n -2 temp.$file > temp1.$file
-		rm temp.$file && mv temp1.$file temp.$file
 	fi
-
-fi
 
 done < $results_folder/input
 
